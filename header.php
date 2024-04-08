@@ -72,9 +72,12 @@
                     <a class="nav-link" href="#">Order</a>
                 </li>
                 
-                <li style="width:300px; margin-left:20px;  "><input type="text" class="form-control" id="search"></li>
-				<li ><button class="btn btn-success" id="search_btn">Search</button></li>
+                <form method="post">
+                <li style="width:300px; margin-left:20px;  "><input type="text" name="search_box"  placeholder="search here..." class="form-control" id="search"></li><li ><button class="btn btn-success" id="search_btn" name="search_btn">Search</button></li>
+				
 
+                </form>
+                
             </ul>
 
             <?php if(isset($_SESSION['username'])){

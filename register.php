@@ -1,3 +1,84 @@
+<?php
+// require functions.php file
+require ('functions.php');
+
+session_start();
+	function input_filter($data){
+		$data = trim($data);
+		$data = stripslashes($data);
+		$data = htmlspecialchars($data);
+		return $data;
+	}
+if(isset($_SESSION['user_id'])){
+	$user_id = $_SESSION['user_id'];
+ }else{
+	$user_id = '';
+ };
+
+ if(isset($_POST['register'])){
+
+	$username = input_filter($_POST['username']);
+	$email = input_filter($_POST['email']);
+	$mobile = input_filter($_POST['mobile']);
+	$pass = input_filter($_POST['password']);
+	$repass = input_filter($_POST['repassword']);
+	$street = input_filter($_POST['street']);
+	$city = input_filter($_POST['city']);
+	$district = input_filter($_POST['district']);
+
+	$username = mysqli_real_escape_string($conn, $username);
+	$pass = mysqli_real_escape_string($conn, $pass);
+	$mobile = mysqli_real_escape_string($conn, $mobile);
+	$email = mysqli_real_escape_string($conn, $email);
+	$repass = mysqli_real_escape_string($conn, $repass);
+	$street = mysqli_real_escape_string($conn, $street);
+	$city = mysqli_real_escape_string($conn, $city);
+	$district = mysqli_real_escape_string($conn, $district);
+	
+
+
+
+	$query = "SELECT * FROM user WHERE `username`=? ";
+
+	$stmt = $conn->prepare($query);
+
+	if (!$stmt) {
+		die("Error: " .$conn->error);
+	}
+
+	$stmt->bind_param("s", $username);
+	$stmt->execute();
+
+
+	$result = $stmt->get_result();
+
+	if($result-> num_rows > 0 ){
+		echo "<script>alert('Username already exists !')</script>";
+	}
+	else{
+		if($pass != $repass){
+			echo "Confirm password not matched!";
+		}
+		else{
+			$status = 1; // Giá trị mặc định cho cột status
+			$is_admin = 0; // Giá trị mặc định cho cột is_admin
+			$insert_user = $conn->prepare("INSERT INTO `user` (`email`, `username`, `password`, `street`, `district`, `city`, `phone_number`, `status`, `is_admin`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+
+			$insert_user-> bind_param("sssssssii", $email, $username, $pass, $street, $district, $city, $mobile, $status, $is_admin);
+			$insert_user-> execute();
+			echo "Register successfully!";
+		}
+	}
+	$stmt->close();
+	$conn->close();
+ }
+
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,10 +98,7 @@
 <!-- Custom CSS file -->
 <link rel="stylesheet" href="style.css">
 
-<?php
-// require functions.php file
-require ('functions.php');
-?>
+
 </head>
 <body>
 
@@ -46,18 +124,22 @@ require ('functions.php');
 					<div class="panel-body">
 					
 
-					<form id="signup_form" onsubmit="return false">
+					<form id="signup_form" method="post">
 						<div class="row">
 							<div class="col-md-12">
-								<label for="user_name">User Name</label>
-								<input type="text" id="user_name" name="user_name" class="form-control" required>
+								<label for="username">Username</label>
+								<input type="text" id="user_name" name="username" class="form-control" required>
 							</div>
 						
 						</div>
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<label for="email">Email</label>
 								<input type="text" id="email" name="email"class="form-control" required>
+							</div>
+							<div class="col-md-6">
+								<label for="mobile">Contact Number</label>
+								<input type="text" id="mobile" name="mobile"class="form-control" required>
 							</div>
 						</div>
 						<div class="row">
@@ -65,6 +147,7 @@ require ('functions.php');
 								<label for="password">Password</label>
 								<input type="password" id="password" name="password"class="form-control" required>
 							</div>
+							
 						</div>
 						<div class="row">
 							<div class="col-md-12">
@@ -73,30 +156,71 @@ require ('functions.php');
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-12">
-								<label for="mobile">Contact Number</label>
-								<input type="text" id="mobile" name="mobile"class="form-control" required>
-							</div>
+							
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<label for="address1">Address 1</label>
-								<input type="text" id="address1" name="address1"class="form-control" required>
+								<label for="street">Street</label>
+								<input type="text" id="street" name="street"class="form-control" required>
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-12">
-								<label for="address2">Address 2</label>
-								<input type="text" id="address2" name="address2"class="form-control" required>
-							</div>
-						</div>
-						<p><br/></p>
-						<div class="row">
-							<div class="col-md-12">
-								<input style="width:100%;" value="Sign Up" type="submit" name="signup_button"class="btn btn-success btn-lg">
-							</div>
+						<div class="col-md-6">
+                                <label for="city">City</label>
+                                <select id="city" name="city" class="form-control" required>
+                                    <option value="">Select City</option>
+                                    <option value="HCMC">Ho Chi Minh</option>
+                                    
+                                    <!-- Add more options as needed -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="district">District</label>
+                                <select id="district" name="district" class="form-control" required>
+                                    <option value="">Select District</option>
+                                    <option value="district1">District 1</option>
+                                    <option value="district2">District 2</option>
+                                    <option value="district3">District 3</option>
+                                    <option value="district4">District 4</option>
+                                    <option value="district5">District 5</option>
+                                    <option value="district6">District 6</option>
+                                    <option value="district7">District 7</option>
+                                    <option value="district8">District 8</option>
+                                    <option value="district9">District 9</option>
+                                    <option value="district10">District 10</option>
+                                    <option value="district11">District 11</option>
+                                    <option value="district12">District 12</option>
+                                    <option value="TanBinh">Tan Binh </option>
+                                    <option value="BinhTan">Binh Tan </option>
+                                    <option value="TanPhu">Tan Phu</option>
+                                    <option value="GoVap">Go Vap</option>
+                                    <option value="PhuNhuan">Phu Nhuan</option>
+                                    <option value="BinhChanh">Binh Chanh</option>
+                                    <option value="HocMon">Hoc Mon</option>
+                                    <option value="CanGio">Can Gio</option>
+                                    <option value="CuChi">Cu Chi</option>
+                                    <option value="NhaBe">Nha Be</option>
+                                    <!-- Add more options as needed -->
+                                </select>
+                            </div>
 						</div>
 						
+						<p><br/></p>
+						
+						<div class="row">
+							<div class="col-md-12">
+								<input style="width:100%;" value="Register Now" type="submit" name="register"class="btn btn-success btn-lg">
+							</div>
+						</div>
+						<p>Already have an account?</p>
+      					<a href="login.php" >
+						  <div class="row">
+							<div class="col-md-12">
+								<input style="width:100%;" value="Login Now"  name="signup_button"class="btn btn-warning btn-lg">
+							</div>
+						</div>
+						</a>
+						<p><br/></p>
 					</div>
 					</form>
 					<div class="panel-footer"></div>

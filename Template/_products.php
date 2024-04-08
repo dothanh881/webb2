@@ -1,8 +1,70 @@
 <!--   product  -->
+<?php 
+   if(isset($_POST['top_sale_submit'])){
+    if($user_id == ''){
+        header('location: login.php');
+    } else {
+        $item_id = $_POST['pid'];
+        $name = $_POST['name'];
+        $cart_price = $_POST['price'];
+        $cart_quantity = $_POST['qty'];
+        $cart_image = $_POST['image'];
+
+        $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE item_id = ? AND user_id = ?");
+        $check_cart_numbers->bind_param("ii", $item_id, $user_id);
+        $check_cart_numbers->execute();
+        $check_cart_numbers->store_result();
+
+        if($check_cart_numbers->num_rows > 0){
+            $message = 'already added to cart!';
+        } else {
+            $check_cart_numbers->close();
+
+            $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name, cart_image) VALUES(?,?,?,?,?,?)");
+            $insert_cart->bind_param("iiidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
+            $insert_cart->execute();
+            $message = 'added to wishlist!';
+        }
+    }
+}
+
+if (isset($_POST['top_sale_submit'])){
+    if(isset($_SESSION['cart'])){
+        // Kiểm tra xem key 'item_id' có tồn tại trong mảng $_POST không
+        if(isset($_POST['pid'])) {
+            if(in_array($_POST['pid'], array_keys($_SESSION['cart']))){
+                $_SESSION['cart'][$_POST['pid']] += 1;
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit;
+            }else{
+                // Create new session variable
+                $_SESSION['cart'][$_POST['pid']] = 1;
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit; 
+            }
+        } else {
+           
+            echo "Không có 'item_id' trong form POST!";
+            exit; 
+        }
+    } else {
+        // Create new session variable
+        $_SESSION['cart'][$_POST['pid']] = 1;
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit;
+    }
+}
+?>
+
 <?php
     $item_id = $_GET['item_id'] ?? 1;
     foreach ($product->getData() as $item) :
         if ($item['item_id'] == $item_id) :
+
+
+          
+
+
 ?>
 <section id="product" class="py-3">
     <div class="container">
@@ -14,13 +76,19 @@
                         <button type="submit" class="btn btn-danger form-control">Proceed to Buy</button>
                     </div>
                     <div class="col">
+                    <form method="post">
+                            <input type="hidden" name="pid" value="<?= $item['item_id']; ?>">
+                            <input type="hidden" name="name" value="<?= $item['item_name']; ?>">
+                            <input type="hidden" name="price" value="<?= $item['item_price']; ?>">
+                            <input type="hidden" name="image" value="<?= $item['item_image']; ?>">
+                            <input type="hidden" name="qty" value="1">
+
                         <?php
-                        if (in_array($item['item_id'], $Cart->getCartId($product->getData('cart')) ?? [])){
-                            echo '<button type="submit" disabled class="btn btn-success font-size-16 form-control">In the Cart</button>';
-                        }else{
+                       
                             echo '<button type="submit" name="top_sale_submit" class="btn btn-warning font-size-16 form-control">Add to Cart</button>';
-                        }
+                        
                         ?>
+                         </form>
                     </div>
                 </div>
             </div>

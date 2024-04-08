@@ -58,5 +58,9 @@
 
 <!-- Custom Javascript -->
 <script src="index.js"></script>
+<script src="./src/bootstrap-input-spinner.js"></script>
+<script>
+    $("input[type='number']").inputSpinner()
+</script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <?php
     shuffle($product_shuffle);
 
+  
     
     if(isset($_POST['top_sale_submit'])){
         if($user_id == ''){
@@ -10,6 +11,7 @@
             $name = $_POST['name'];
             $cart_price = $_POST['price'];
             $cart_quantity = $_POST['qty'];
+            $cart_image = $_POST['image'];
     
             $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE item_id = ? AND user_id = ?");
             $check_cart_numbers->bind_param("ii", $item_id, $user_id);
@@ -17,14 +19,14 @@
             $check_cart_numbers->store_result();
     
             if($check_cart_numbers->num_rows > 0){
-                $message[] = 'already added to cart!';
+                $message = 'already added to cart!';
             } else {
                 $check_cart_numbers->close();
     
-                $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name ) VALUES(?,?,?,?,?)");
-                $insert_cart->bind_param("iiids", $user_id, $item_id, $cart_quantity, $cart_price, $name);
+                $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name, cart_image) VALUES(?,?,?,?,?,?)");
+                $insert_cart->bind_param("iiidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
                 $insert_cart->execute();
-                $message[] = 'added to wishlist!';
+                $message = 'added to wishlist!';
             }
         }
     }
@@ -82,11 +84,15 @@
                             <input type="hidden" name="qty" value="1">
                             <?php
                            
-                           if (in_array($item['item_id'], $Cart->getCartId($product->getData('cart')) ?? [])){
-                            echo '<button type="submit" disabled class="btn btn-success font-size-12">In the Cart</button>';
-                        } else {
-                            echo '<button type="submit" name="top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
-                        }
+                          
+                           
+                                echo '<button type="submit" name="top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                          
+                       
+
+                            
+                        
+                          
                             
                             ?>
                     </form>

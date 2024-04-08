@@ -1,19 +1,20 @@
 <!-- Shopping cart section  -->
 <?php
 
-   
+if(isset($_SESSION['user_id'])){
+    $user_id = $_SESSION['user_id'];
+ }else{
+    $user_id = '';
+ };
+ 
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         if (isset($_POST['delete-cart-submit'])){
             $deletedrecord = $Cart->deleteCart($_POST['item_id']);
         }
 
-        // // save for later
-        // if (isset($_POST['wishlist-submit'])){
-        //     $Cart->saveForLater($_POST['item_id']);
-        // }
+      
     }
-
     if(isset($_POST['update_cart_qty'])){
         $qty = $_POST['update_quantity'];
         $qty = filter_var($qty, FILTER_SANITIZE_STRING);
@@ -46,78 +47,53 @@
         }
     }
     
-
-
-
-
-       // Khai báo mảng để lưu trữ cart_quantity
-     
-       // Hiển thị sản phẩm trong giỏ hàng và cart_quantity
-       foreach ($product->getData('cart') as $item) :
-          
-           // Tiếp tục hiển thị sản phẩm như bạn đã làm trước đó
-       endforeach;
-     
-   
 ?>
 
- 
-            
-
-<section id="cart" class="py-3 mb-5 mt-5">
-    <div class="container-fluid w-75 ">
-        <h5 class="font-baloo font-size-20  ">Shopping Cart</h5>
+<section id="cart" class="py-3 mb-5">
+    <div class="container-fluid w-75">
+        <h5 class="font-baloo font-size-20">Shopping Cart</h5>
 
         <!--  shopping cart items   -->
         <div class="row">
-            <div class="col-sm-9 ">
+            <div class="col-sm-9">
                 <?php
-            
-                  
-                    foreach ($product->getData('cart') as $item) :
-                       
-                        $cart = $product->getProduct($item['item_id']);
-       
+                    foreach ($product->getData1('cart') as $item) :
+                        $cart = $product->getProduct1($user_id, $item['item_id']);
                         $subTotal[] = array_map(function ($item){
-
+                            $newQuantity = $item['cart_quantity'];
+                            $newPrice = $item['cart_price'] * $newQuantity;
                 ?>
                 <!-- cart item -->
-                <div class="row border-top py-3 mt-5">
+                <div class="row border-top py-3 mt-3">
                     <div class="col-sm-2">
-                        <img src="<?php echo $item['item_image'] ?? "./assets/products/img1.png" ?>" style="height: 120px;" alt="cart1" class="img-fluid">
+                        <img src="<?php echo $item['cart_image'] ?? "./assets/products/1.png" ?>" style="height: 120px;" alt="cart1" class="img-fluid">
                     </div>
                     <div class="col-sm-8">
-                        <h5 class="font-baloo font-size-20"><?php echo $item['item_name'] ?? "Unknown"; ?></h5>
-                        <small>by <?php echo $item['item_brand'] ?? "Brand"; ?></small>
+                        <h5 class="font-baloo font-size-20"><?php echo $item['name'] ?? "Unknown"; ?></h5>
+                       
                         <!-- product rating -->
-                        <div class="d-flex">
-                            <div class="rating text-warning font-size-12">
-                                
-                            </div>
-                            <a href="#" class="px-2 font-rale font-size-14"></a>
-                        </div>
+                        
                         <!--  !product rating-->
 
                         <!-- product qty -->
                         <div class="qty d-flex pt-2">
-                
-                            
 
-<div class="d-flex font-rale w-25">
-    <form action="" method="post">
-        <input type="hidden" name="update_quantity_id" value="<?php echo $item['item_id']  ?>">
-        <input type="number" name="update_quantity" class="qty" min="1" max="99" value="<?php echo $cart_quantity ?>">
-        <button type="submit" class="fas fa-edit" name="update_cart_qty"></button>
-    </form>
-</div>
-
+                        <div class="d-flex font-rale w-35">
+                        <form action="" method="post">
+                            <input type="hidden" name="update_quantity_id" value="<?php echo $item['item_id']  ?>">
+                            <input type="number" name="update_quantity" class="qty" min="1" max="99" value="<?php echo $item['cart_quantity'] ?>">
+                            <input type="submit"  class="btn btn-outline-primary btn-sm" value="Save for later" style="margin-left: 8px;" name="update_cart_qty">
+                        </form>
+                            </div>
+                           
 
                             <form method="post">
                                 <input type="hidden" value="<?php echo $item['item_id'] ?? 0; ?>" name="item_id">
-                                <button type="submit" name="delete-cart-submit" class="btn font-baloo text-danger px-3 border-right">Delete</button>
+                                <button type="submit" name="delete-cart-submit" class="btn btn-outline-danger btn-sm mr-3 " style="margin-left: 10px;">Delete</button>
                             </form>
 
-                       
+                           
+                         
 
                         </div>
                         <!-- !product qty -->
@@ -126,16 +102,15 @@
 
                     <div class="col-sm-2 text-right">
                         <div class="font-size-20 text-danger font-baloo">
-                            $<span class="product_price" data-id="<?php echo $item['item_id'] ?? '0'; ?>"><?php echo $item['item_price'] ?? 0; ?></span>
+                            $<span class="product_price" data-id="<?php echo $item['item_id'] ?? '0'; ?>"><?php echo $newPrice ?? 0; ?></span>
                         </div>
                     </div>
                 </div>
                 <!-- !cart item -->
                 <?php
-                            return $item['item_price'];
+                            return $newPrice;
                         }, $cart); // closing array_map function
                     endforeach;
-                 
                 ?>
             </div>
             <!-- subtotal section-->

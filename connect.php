@@ -6,7 +6,7 @@
 $host = 'localhost';
 $user = 'root';
 $password = '';
-$database = "shopee";
+$database = "shoppee";
 
 $conn = new mysqli( $host, $user, $password, $database);
 
@@ -17,7 +17,9 @@ $conn = new mysqli( $host, $user, $password, $database);
 // else{
 //     echo "Connected successfully";
 // }
-
+if(!$conn) {
+    die("Connection Failed:".mysqli_connect_error());
+}
 ?>
 
 

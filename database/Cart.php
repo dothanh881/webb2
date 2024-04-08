@@ -96,19 +96,19 @@ private function updateCartQuantity($userid, $itemid, $quantity)
         }
     }
 
-    // calculate sub total
     public function getSum($arr){
         if(isset($arr)){
             $sum = 0;
             foreach ($arr as $item){
-                $sum += floatval($item[0]);
+                if(isset($item[0])) { // Kiểm tra xem phần tử thứ nhất của mảng con có tồn tại hay không
+                    $sum += floatval($item[0]);
+                }
             }
             return sprintf('%.2f' , $sum);
         }
     }
-
     // get item_it of shopping cart list
-    public function getCartId($cartArray = null, $key = "item_id"){
+    public function getCartId($user_id, $cartArray = null, $key = "item_id"){
         if ($cartArray != null){
             $cart_id = array_map(function ($value) use($key){
                 return $value[$key];
@@ -116,7 +116,7 @@ private function updateCartQuantity($userid, $itemid, $quantity)
             return $cart_id;
         }
     }
-
+  
     // Save for later
     public function saveForLater($item_id = null, $saveTable = "wishlist", $fromTable = "cart"){
         if ($item_id != null){

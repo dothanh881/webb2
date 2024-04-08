@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: localhost    Database: shopee
+-- Host: localhost    Database: shoppee
 -- ------------------------------------------------------
 -- Server version	8.0.35
 
@@ -31,20 +31,26 @@ values (1, 'APPLE'),
 create table `user` (
   `user_id` int not null,
   `email` varchar(100) not null,
+   `username` varchar(100) not null,
+    `password` varchar(100) not null,
+    `street` varchar(255) not null,
   `district` varchar(30) not null,
   `city` varchar(100) not null,
   `phone_number` varchar(100) not null,
-  `password` varchar(100) not null,
   `status` int not null,
-  `username` varchar(100) not null,
-  `street` varchar(255) not null,
   `is_admin` tinyint(1) not null,
 	`register_date`  datetime not null default current_timestamp,
     `updated_at` datetime not null default current_timestamp,
   primary key (`user_id`)
 ) engine=innodb default charset=utf8mb4;
 
--- dumping data for table `customers`
+
+INSERT INTO `user` (`email`, `username`, `password`, `street`, `district`, `city`, `phone_number`, `status`, `is_admin`) 
+VALUES ('abc@email.com', 'user123', 'abc123', '273 An Duong Vuong', 'District 5', 'Ho Chi Minh', '0981776491', 1, 0),
+('admin@email.com', 'admin', 'admin123', '273 An Duong Vuong', 'District 5', 'Ho Chi Minh', '0123456789', 1, 1);
+
+
+
 
 -- table structure for table `product`
 create table `product` (
@@ -130,14 +136,13 @@ create table `cart` (
 -- dumping data for table `cart`
 
 
-CREATE TABLE `wishlist` (
-  `cart_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ALTER TABLE `user`
+  MODIFY `user_id` int(100) NOT NULL AUTO_INCREMENT;
    
    ALTER TABLE `cart`
   MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+  
+
 delimiter //
 
 create trigger `check_cart_quantity_before_insert_update` 
@@ -161,25 +166,6 @@ end;
 
 delimiter ;
 
-delimiter //
-
-create trigger `set_item_brand_before_insert`
-before insert on `product`
-for each row
-begin
-    declare category_name_value varchar(255);
-    
-    -- lấy giá trị của category_name cho item_brand
-    select `category_name` into category_name_value
-    from `category`
-    where `category_id` = new.`category_id`;
-
-    -- gán giá trị cho trường item_brand
-    set new.`item_brand` = category_name_value;
-end;
-//
-
-delimiter ;
 
 /*!40101 set sql_mode=@old_sql_mode */;
 /*!40014 set foreign_key_checks=@old_foreign_key_checks */;

@@ -20,29 +20,29 @@ if(isset($_POST['top_sale_submit'])){
         $item_id = $_POST['pid'];
         $name = $_POST['name'];
         $cart_price = $_POST['price'];
+        $cart_quantity = $_POST['qty'];
+        $cart_image = $_POST['image'];
 
-        $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE name = ? AND user_id = ?");
-        $check_cart_numbers->bind_param("si", $name, $user_id); // Bind parameters
+        $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE item_id = ? AND user_id = ?");
+        $check_cart_numbers->bind_param("ii", $item_id, $user_id);
         $check_cart_numbers->execute();
-        $check_cart_numbers->store_result(); // Store the result set
+        $check_cart_numbers->store_result();
 
         if($check_cart_numbers->num_rows > 0){
-            $message[] = 'already added to cart!';
+            $message = 'already added to cart!';
         } else {
-            // Close the previous result set
             $check_cart_numbers->close();
 
-            $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name ) VALUES(?,?,1,?,?)");
-            $insert_cart->bind_param("iids", $user_id, $item_id, $cart_price, $name); // Bind parameters
+            $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name, image) VALUES(?,?,?,?,?,?)");
+            $insert_cart->bind_param("iiidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
             $insert_cart->execute();
-            // echo "<script>alert('Added to cart!')</script>";
-            $message[] = 'added to wishlist!';
+            $message = 'added to wishlist!';
         }
     }
 }
 
 
-$in_cart = $Cart->getCartId($product->getData('cart'));
+$in_cart = $Cart->getCartId($user_id,$product->getData('cart'));
 
 ?>
 <section id="special-price">
@@ -74,11 +74,17 @@ $in_cart = $Cart->getCartId($product->getData('cart'));
                             <input type="hidden" name="name" value="<?= $item['item_name']; ?>">
                             <input type="hidden" name="price" value="<?= $item['item_price']; ?>">
                             <input type="hidden" name="image" value="<?= $item['item_image']; ?>">
-                   
+                            <input type="hidden" name="qty" value="1">
                                 <?php
                                
-                                    echo '<button type="submit" name="top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                             
                                 
+                             
+                                    echo '<button type="submit" name="top_sale_submit" class="btn btn-warning font-size-12">Add to Cart</button>';
+                              
+                            
+                              
+                            
                                 ?>
                             </form>
                         </div>
