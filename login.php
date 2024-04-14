@@ -3,16 +3,10 @@
 <?php
     // require functions.php file
     require ('functions.php');
+    session_name('customer_session');
 
 	session_start();
 
-if(isset($_SESSION['user_id'])){
-   $user_id = $_SESSION['user_id'];
-}else{
-   $user_id = '';
-};
-
-	
 ?>
 
 <?php
@@ -27,52 +21,55 @@ if(isset($_SESSION['user_id'])){
         // filter user_input
         $username = input_filter($_POST['fname']);
         $password = input_filter($_POST['password']);
-
+    
         // Tạo một kết nối đến cơ sở dữ liệu MySQL
-       
-
+    
         // escaping 
         $username = mysqli_real_escape_string($conn, $username);
-        $password = mysqli_real_escape_string($conn, $password);
-
+    
         // Query template
-        $query = "SELECT * FROM user WHERE `username`=? AND `password` = ? AND `is_admin` = 0";
-        
+        $query = "SELECT user_id, password FROM user WHERE `username`=? AND `is_admin` = 0 AND `status` = 1";
+    
         // Chuẩn bị truy vấn
         $stmt = $conn->prepare($query);
-
+    
         // Kiểm tra và xử lý lỗi nếu không thể chuẩn bị truy vấn
         if (!$stmt) {
             die("Error: " .$conn->error);
         }
-
+    
         // Liên kết các biến với truy vấn
-        $stmt->bind_param("ss", $username, $password);
-
+        $stmt->bind_param("s", $username);
+    
         // Thực thi truy vấn
         $stmt->execute();
-
+    
         // Lấy kết quả
         $result = $stmt->get_result();
-
+    
         if($result->num_rows == 1){
             $row = $result->fetch_assoc();
-
-           
-			
-            
-            $_SESSION['username'] = $username;
-            $_SESSION['user_id'] = $row['user_id'];
-            header("location: index.php");
+            $hash_password = $row['password'];
+    
+            if(password_verify($password, $hash_password)){
+                $_SESSION['username'] = $username;
+                $_SESSION['user_id'] = $row['user_id'];
+                header("location: ./index.php");
+                exit; // Ensure script stops here to prevent further execution
+            } 
+        } else {
+            echo "<script>alert('Incorrect username or password !! Enter again please ! ')</script>";
         }
-        else{
-            echo "<script>alert('Incorrect username or password!')</script>";
-        }
-
+    
         // Đóng truy vấn và kết nối
         $stmt->close();
         $conn->close();
     }
+    
+    
+      
+    
+    
 ?>
 
 

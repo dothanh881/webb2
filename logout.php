@@ -1,10 +1,11 @@
 <?php
 require('functions.php');
 
+session_name('customer_session');
 session_start();
 unset($_SESSION['cart']); // Xóa thông tin giỏ hàng
-unset($_SESSION['user_id']); // Xóa thông tin đăng nhập của người dùng
-session_unset();
+ // Xóa thông tin đăng nhập của người dùng
+unset($_SESSION['user_id']);
 session_destroy();
 
 header('location: index.php');

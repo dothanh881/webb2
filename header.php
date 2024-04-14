@@ -1,11 +1,13 @@
 <?php 
+session_name('customer_session');
     session_start();
+ 
+    
     if(isset($_SESSION['user_id'])){
         $user_id = $_SESSION['user_id'];
      }else{
         $user_id = '';
      };
-     
 
 
 ?>
@@ -30,6 +32,8 @@
 
     <!-- Custom CSS file -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
+    
 
     <?php
     // require functions.php file
@@ -58,35 +62,29 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav m-auto font-rubik">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">On Sale</a>
-                </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Products <i class="fas fa-chevron-down"></i></a>
-                </li>
-                
-             
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Order</a>
-                </li>
-                
-                <form method="post">
-                <li style="width:300px; margin-left:20px;  "><input type="text" name="search_box"  placeholder="search here..." class="form-control" id="search"></li><li ><button class="btn btn-success" id="search_btn" name="search_btn">Search</button></li>
-				
-
-                </form>
-                
-            </ul>
+        <ul class="navbar-nav m-auto font-rubik">
+    <li class="nav-item active">
+        <a class="nav-link" href="#">On Sale</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Products <i class="fas fa-chevron-down"></i></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Order</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="searchpage.php"><i class="fas fa-search"></i> Search</a>
+    </li>
+</ul>
 
             <?php if(isset($_SESSION['username'])){
 			?>
+            
             <div class="dropdown ">
             <a class="px-3 mr-4 border-right border-left dropdown-toggle text-light " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Hi <?php echo $_SESSION['username']?>
             </a>
-                        
+            
             <div class="dropdown-menu drop" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" href="#">Profile</a>
                 <a class="dropdown-item" href="#">Order</a>
@@ -105,7 +103,7 @@
 <?php
       
       $select_rows = $conn->prepare("SELECT * FROM `cart` WHERE `user_id` = ?");
-      $select_rows->bind_param("i", $user_id);
+      $select_rows->bind_param("s", $user_id);
       $select_rows->execute();
 
 // Lấy kết quả và đếm số dòng trả về

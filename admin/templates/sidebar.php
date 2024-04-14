@@ -1,3 +1,13 @@
+<?php 
+
+// Kiểm tra xem phần tử 'username' có tồn tại trong mảng $_SESSION hay không
+if ( isset($_SESSION["user_id"]) ) {
+  $admin = $_SESSION['admin'];
+} else {
+  // Xử lý trường hợp không tồn tại 'username' trong $_SESSION
+  $admin = "Guest";
+}
+?>
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky">
         <ul class="nav flex-column">
@@ -13,7 +23,7 @@
 
 
           <li class="nav-item">
-            <a class="nav-link <?php echo ($page == '' || $page == 'index.php') ? 'active' : ''; ?>" href="index.php">
+            <a class="nav-link <?php echo ($page == '' || $page == 'index_admin.php') ? 'active' : ''; ?>" href="index_admin.php">
               <span data-feather="home"></span>
               Dashboard <span class="sr-only">(current)</span>
             </a>
@@ -57,7 +67,7 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2 ">Hello, <?php echo $_SESSION["admin_name"]; ?></h1>
+        <h1 class="h2 ">Hello, <?php echo $admin ?></h1>
         <div class="btn-toolbar mb-2 mb-md-0">
 
         </div>

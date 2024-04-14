@@ -6,6 +6,13 @@ $(document).ready(function(){
         items: 1
     });
 
+    
+    // banner owl carousel
+    $("#search-result-area .owl-carousel").owlCarousel({
+        dots: true,
+        items: 4
+    });
+
     // top sale owl carousel
     $("#top-sale .owl-carousel").owlCarousel({
         loop: true,
@@ -136,4 +143,12 @@ $(document).ready(function(){
 });
 
 
- 
+function checkQuantity(input, itemId) {
+    var cartQuantity = parseInt(input.value);
+    var maxQuantity = parseInt(input.getAttribute('max'));
+    
+    if (cartQuantity > maxQuantity) {
+        input.value = maxQuantity;
+        alert("Cart quantity for item " + itemId + " exceeds available quantity in stock.");
+    }
+}

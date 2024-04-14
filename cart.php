@@ -1,5 +1,6 @@
 <?php
-   
+   session_name('customer_session');
+
 ob_start();
 
 

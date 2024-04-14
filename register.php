@@ -1,6 +1,7 @@
 <?php
 // require functions.php file
 require ('functions.php');
+session_name('customer_session');
 
 session_start();
 	function input_filter($data){
@@ -9,11 +10,6 @@ session_start();
 		$data = htmlspecialchars($data);
 		return $data;
 	}
-if(isset($_SESSION['user_id'])){
-	$user_id = $_SESSION['user_id'];
- }else{
-	$user_id = '';
- };
 
  if(isset($_POST['register'])){
 
@@ -25,6 +21,9 @@ if(isset($_SESSION['user_id'])){
 	$street = input_filter($_POST['street']);
 	$city = input_filter($_POST['city']);
 	$district = input_filter($_POST['district']);
+	$user_id = input_filter($_POST['customer_id']);
+	$fullname = input_filter($_POST['fullname']);
+
 
 	$username = mysqli_real_escape_string($conn, $username);
 	$pass = mysqli_real_escape_string($conn, $pass);
@@ -34,6 +33,8 @@ if(isset($_SESSION['user_id'])){
 	$street = mysqli_real_escape_string($conn, $street);
 	$city = mysqli_real_escape_string($conn, $city);
 	$district = mysqli_real_escape_string($conn, $district);
+	$user_id = mysqli_real_escape_string($conn, $user_id);
+	$fullname = mysqli_real_escape_string($conn, $fullname);
 	
 
 
@@ -60,12 +61,13 @@ if(isset($_SESSION['user_id'])){
 			echo "Confirm password not matched!";
 		}
 		else{
-			$status = 1; // Giá trị mặc định cho cột status
-			$is_admin = 0; // Giá trị mặc định cho cột is_admin
-			$insert_user = $conn->prepare("INSERT INTO `user` (`email`, `username`, `password`, `street`, `district`, `city`, `phone_number`, `status`, `is_admin`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$enc_pass = password_hash($pass, PASSWORD_DEFAULT);
+
+			
+			$insert_user = $conn->prepare("INSERT INTO `user` (`user_id`, `email`, `username`, `password`, `street`, `district`, `city`, `phone_number`, `fullname` ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 
-			$insert_user-> bind_param("sssssssii", $email, $username, $pass, $street, $district, $city, $mobile, $status, $is_admin);
+			$insert_user-> bind_param("sssssssss",$user_id, $email, $username,$enc_pass, $street, $district, $city, $mobile, $fullname);
 			$insert_user-> execute();
 			echo "Register successfully!";
 		}
@@ -98,7 +100,9 @@ if(isset($_SESSION['user_id'])){
 <!-- Custom CSS file -->
 <link rel="stylesheet" href="style.css">
 
-
+<?php
+	include('code-generator.php');
+?>
 </head>
 <body>
 
@@ -129,6 +133,7 @@ if(isset($_SESSION['user_id'])){
 							<div class="col-md-12">
 								<label for="username">Username</label>
 								<input type="text" id="user_name" name="username" class="form-control" required>
+								<input class="form-control" value="<?php echo $cus_id;?>" required name="customer_id"  type="hidden">
 							</div>
 						
 						</div>
@@ -143,21 +148,23 @@ if(isset($_SESSION['user_id'])){
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<label for="password">Password</label>
 								<input type="password" id="password" name="password"class="form-control" required>
 							</div>
-							
-						</div>
-						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<label for="repassword">Confirm Password</label>
 								<input type="password" id="repassword" name="repassword"class="form-control" required>
 							</div>
-						</div>
-						<div class="row">
 							
 						</div>
+						<div class="row">
+						<div class="col-md-12">
+								<label for="fullname">Full Name</label>
+								<input type="text" id="fullname" name="fullname"class="form-control" required>
+							</div>
+						</div>
+						
 						<div class="row">
 							<div class="col-md-12">
 								<label for="street">Street</label>

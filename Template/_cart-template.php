@@ -19,30 +19,27 @@ if(isset($_SESSION['user_id'])){
         $qty = $_POST['update_quantity'];
         $qty = filter_var($qty, FILTER_SANITIZE_STRING);
         $update_id = $_POST['update_quantity_id'];
+        $user_id = $_SESSION['user_id']; // Get the user_id from the session
         
-        // Chuẩn bị câu lệnh SQL với tham số ràng buộc
-        $query = "UPDATE `cart` SET cart_quantity = ? WHERE item_id = ?";
+        // Prepare the SQL statement with parameter binding
+        $query = "UPDATE `cart` SET cart_quantity = ? WHERE item_id = ? AND user_id = ?";
         
-        // Chuẩn bị câu lệnh SQL
+        // Prepare the SQL statement
         $stmt = $conn->prepare($query);
         
         if($stmt){
-            // Ràng buộc giá trị vào câu lệnh SQL
-            $stmt->bind_param("ii", $qty, $update_id);
+            // Bind the values to the SQL statement parameters
+            $stmt->bind_param("iii", $qty, $update_id, $user_id);
             
-            // Thực thi câu lệnh SQL
+            // Execute the SQL statement
             if($stmt->execute()){
-               
                 $cartQuantities[$update_id] = $qty;
             } else {
-               
                 echo "Update failed";
             }
             
-            
             $stmt->close();
         } else {
-          
             echo "Error preparing statement";
         }
     }
@@ -57,8 +54,8 @@ if(isset($_SESSION['user_id'])){
         <div class="row">
             <div class="col-sm-9">
                 <?php
-                    foreach ($product->getData1('cart') as $item) :
-                        $cart = $product->getProduct1($user_id, $item['item_id']);
+                    foreach ($product->getData1('cart',$user_id) as $item) :
+                        $cart = $product->getProduct1( $user_id,$item['item_id'],'cart');
                         $subTotal[] = array_map(function ($item){
                             $newQuantity = $item['cart_quantity'];
                             $newPrice = $item['cart_price'] * $newQuantity;
@@ -77,7 +74,7 @@ if(isset($_SESSION['user_id'])){
 
                         <!-- product qty -->
                         <div class="qty d-flex pt-2">
-
+                          
                         <div class="d-flex font-rale w-35">
                         <form action="" method="post">
                             <input type="hidden" name="update_quantity_id" value="<?php echo $item['item_id']  ?>">
@@ -85,7 +82,6 @@ if(isset($_SESSION['user_id'])){
                             <input type="submit"  class="btn btn-outline-primary btn-sm" value="Save for later" style="margin-left: 8px;" name="update_cart_qty">
                         </form>
                             </div>
-                           
 
                             <form method="post">
                                 <input type="hidden" value="<?php echo $item['item_id'] ?? 0; ?>" name="item_id">

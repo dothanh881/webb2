@@ -29,9 +29,47 @@ class Product
         return $resultArray;
     }
 
-    public function getData1($table = 'cart')
-    {
-        $result = $this->conn->query("SELECT * FROM {$table}");
+    public function getData1($table = 'cart', $user_id)
+{
+    // Prepare the SQL statement with a placeholder for user_id
+    $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE user_id = ?");
+    
+    // Bind the user_id parameter to the prepared statement
+    $stmt->bind_param("s", $user_id);
+    
+    // Execute the prepared statement
+    $stmt->execute();
+    
+    // Get the result set
+    $result = $stmt->get_result();
+
+    $resultArray = array();
+
+    if ($result) {
+        // fetch product data one by one
+        while ($item = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            $resultArray[] = $item;
+        }
+    }
+
+    return $resultArray;
+}
+
+public function getProduct1($user_id, $item_id = null, $table = 'cart')
+{
+    // Check if $item_id is set
+    if (isset($item_id)) {
+        // Prepare the SQL statement with placeholders for user_id and item_id
+        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE user_id = ? AND item_id = ?");
+        
+        // Bind the user_id and item_id parameters to the prepared statement
+        $stmt->bind_param("ss", $user_id, $item_id);
+        
+        // Execute the prepared statement
+        $stmt->execute();
+        
+        // Get the result set
+        $result = $stmt->get_result();
 
         $resultArray = array();
 
@@ -44,25 +82,7 @@ class Product
 
         return $resultArray;
     }
-    public function getProduct1($user_id ,$item_id = null, $table = 'cart')
-    {
-        if (isset($item_id)) {
-            $user_id = $_SESSION['user_id'];
-            $result = $this->conn->query("SELECT * FROM {$table} WHERE user_id={$user_id} AND item_id={$item_id}");
-
-            $resultArray = array();
-
-            if ($result) {
-                // fetch product data one by one
-                while ($item = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-                    $resultArray[] = $item;
-                }
-            }
-
-            return $resultArray;
-        }
-    }
-    
+}
 
     // get product using item id
     public function getProduct($item_id = null, $table = 'product')

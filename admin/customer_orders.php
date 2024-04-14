@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php
+session_name('admin_session');
+session_start();
+
+
+?>
 <?php include_once("./templates/top.php"); ?>
 <?php include_once("./templates/navbar.php"); ?>
 <div class="container-fluid">

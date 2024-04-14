@@ -1,10 +1,15 @@
-<?php session_start(); ?>
+<?php 
+session_name('admin_session');
+
+session_start(); ?>
 <?php include_once("./templates/top.php"); ?>
 <?php include_once("./templates/navbar.php"); ?>
 <div class="container-fluid">
   <div class="row">
     
-    <?php include "./templates/sidebar.php"; ?>
+    <?php include "./templates/sidebar.php";
+    include("./../functions.php");
+    ?>
 
       <div class="row">
       	<div class="col-10">
@@ -19,27 +24,40 @@
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Name</th>
+            
               <th>Image</th>
+              <th>Name</th>
               <th>Price</th>
-              <th>Quantity</th>
-              <th>Category</th>
-              <th>Brand</th>
+              <th>Category</th> 
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="product_list">
-            <!-- <tr>
-              <td>1</td>
-              <td>ABC</td>
-              <td>FDGR.JPG</td>
-              <td>122</td>
-              <td>eLECTRONCS</td>
-              <td>aPPLE</td>
-              <td><a class="btn btn-sm btn-info"></a><a class="btn btn-sm btn-danger">Delete</a></td>
-            </tr> -->
+            <?php 
+
+            $sql = "SELECT * FROM `product`,`category` WHERE `product`.category_id = `category`.category_id";
+            $stmt = $conn->prepare($sql);
+
+            $stmt-> execute();
+
+            $result = $stmt ->get_result();
+
+            while($product = $result->fetch_object()){
+            ?>
+            <tr>
+             
+              <td><img height='100px' src='./../<?= $product->item_image ?>'></td>
+              <td> <?php echo $product->item_name ?></td>
+              <td> <?php echo $product->item_price ?></td>
+              <td> <?php echo $product->category_name ?></td>
+           
+              <td>
+              <a class="btn btn-sm btn-info">Edit</a>
+                  <a class="btn btn-sm btn-warning">Delete</a>
+              </td>
+            </tr>
           </tbody>
+          <?php } ?>
         </table>
       </div>
     </main>

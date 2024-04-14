@@ -1,10 +1,15 @@
-<?php session_start(); ?>
+<?php 
+session_name('admin_session');
+
+session_start(); ?>
 <?php include_once("./templates/top.php"); ?>
 <?php include_once("./templates/navbar.php"); ?>
 <div class="container-fluid">
   <div class="row">
     
-    <?php include "./templates/sidebar.php"; ?>
+    <?php include "./templates/sidebar.php"; 
+    include("./../functions.php");
+    ?>
 
 
       <div class="row">
@@ -26,16 +31,29 @@
             </tr>
           </thead>
           <tbody id="category_list">
-            <!-- <tr>
-              <td>1</td>
-              <td>ABC</td>
-              <td>FDGR.JPG</td>
-              <td>122</td>
-              <td>eLECTRONCS</td>
-              <td>aPPLE</td>
-              <td><a class="btn btn-sm btn-info"></a><a class="btn btn-sm btn-danger">Delete</a></td>
-            </tr> -->
+            <?php 
+            $sql = "SELECT * FROM `category`";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
+            $res = $stmt->get_result();
+            while($category = $res->fetch_object()){
+
+            
+            
+            ?>
+            <tr>
+              <td> <?php echo $category->category_id ?> </td>
+              <td> <?php echo $category->category_name ?> </td>
+            
+             
+              <td>
+              <a class="btn btn-sm btn-info">Edit</a>
+                  <a class="btn btn-sm btn-warning">Delete</a>
+              </td>
+            </tr>
           </tbody>
+          <?php } ?>
         </table>
       </div>
     </main>
