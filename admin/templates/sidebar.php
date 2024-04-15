@@ -5,7 +5,7 @@ if ( isset($_SESSION["user_id"]) ) {
   $admin = $_SESSION['admin'];
 } else {
   // Xử lý trường hợp không tồn tại 'username' trong $_SESSION
-  $admin = "Guest";
+   header('location:login_admin.php');
 }
 ?>
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">

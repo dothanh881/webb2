@@ -169,6 +169,9 @@
   delimiter ;
 
 
+alter table `order` MODIFY order_date date not null DEFAULT current_timestamp();
+
+alter table `order` MODIFY order_status varchar(50) not null DEFAULT 'Pending';
   /*!40101 set sql_mode=@old_sql_mode */;
   /*!40014 set foreign_key_checks=@old_foreign_key_checks */;
   /*!40014 set unique_checks=@old_unique_checks */;
