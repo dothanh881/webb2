@@ -50,8 +50,26 @@ session_start(); ?>
     }
 
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <?php
 
+//paging nav
   $products_per_page = 6;
   
   $total_products = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `product`"));
@@ -120,6 +138,59 @@ session_start(); ?>
 </div>
 
 
+<?php
+
+function input_filter($data){
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+
+if(isset($_POST['add-product'])){
+  // Xử lý tên file hình ảnh
+  $tmp_name =  $_FILES["item_image"]["tmp_name"];
+  $fldimageurl = "./assets/products/" . basename($_FILES["item_image"]["name"]);
+
+  // Di chuyển tệp tải lên vào thư mục đích
+  if(move_uploaded_file($tmp_name, __DIR__ . "/../" . $fldimageurl)){
+      // Lấy dữ liệu từ form và tiến hành xử lý
+      $item_name =   input_filter($_POST['item_name']);
+      $item_category =  input_filter($_POST['category']);
+      $item_desc =  input_filter($_POST['item_desc']);
+      $item_qty =  input_filter($_POST['item_qty']);
+      $item_price =  input_filter($_POST['item_price']);
+      $item_rom =  input_filter($_POST['item_rom']);
+      $item_ram =  input_filter($_POST['item_ram']);
+      $item_color =  input_filter($_POST['item_color']);
+      $item_screen =  input_filter($_POST['item_screen']);
+      $item_image =  mysqli_real_escape_string($conn, $fldimageurl);
+
+      // Tiến hành thêm sản phẩm vào cơ sở dữ liệu
+      $sql = "INSERT INTO `product` (category_id, item_name, item_quantity, item_price, item_color, item_image, item_discription, item_rom, item_ram, size_screen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      $stmt = $conn->prepare($sql);
+
+      if($stmt){
+          $stmt->bind_param("isiisssiii", $item_category, $item_name, $item_qty, $item_price, $item_color, $item_image, $item_desc, $item_rom, $item_ram, $item_screen);
+          if($stmt->execute()) {
+              echo "Sản phẩm đã được thêm thành công vào cơ sở dữ liệu";
+          } else {
+              echo "Lỗi trong quá trình thêm sản phẩm vào cơ sở dữ liệu: " . $stmt->error;
+          }
+      } else {
+          echo "Lỗi trong quá trình chuẩn bị câu lệnh SQL";
+      }
+  } else {
+      echo "Lỗi khi di chuyển tệp tải lên";
+  }
+}
+  
+
+
+?>
+
+
+
 
 <!-- Add Product Modal start -->
 <div class="modal fade" id="add_product_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -132,7 +203,7 @@ session_start(); ?>
         </button>
       </div>
       <div class="modal-body">
-        <form id="add-product-form" enctype="multipart/form-data">
+        <form   action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post"  id="add-product-form" enctype="multipart/form-data">
         	<div class="row">
         		<div class="col-12">
         			<div class="form-group">
@@ -146,6 +217,8 @@ session_start(); ?>
 		        		<label>Category Name</label>
 		        		<select class="form-control category_list" name="category">
 		        			<option value="">Select Category</option>
+		        			<option value="1">APPLE</option>
+		        			<option value="2">SAMSUNG</option>
 		        		</select>
 		        	</div>
         		</div>
@@ -172,6 +245,13 @@ session_start(); ?>
 		        		<label>ROM</label>
 		        		<select class="form-control rom_list" name="item_rom">
 		        			<option value="">Select ROM</option>
+		        			<option value="32">32 GB</option>
+		        			<option value="64">64 GB</option>
+		        			<option value="128">128 GB</option>
+		        			<option value="256">256 GB</option>
+		        			<option value="512">512 GB</option>
+		        			<option value="1024">1 T</option>
+		        	
 		        		</select>
 		        	</div>
         		</div>
@@ -180,6 +260,11 @@ session_start(); ?>
 		        		<label>RAM</label>
 		        		<select class="form-control ram_list" name="item_ram">
 		        			<option value="">Select RAM</option>
+		        			<option value="2">2 GB</option>
+		        			<option value="4">4 GB</option>
+		        			<option value="6">6 GB</option>
+		        			<option value="8">8 GB</option>
+		        			<option value="12">12 GB</option>
 		        		</select>
 		        	</div>
         		</div>
@@ -188,14 +273,29 @@ session_start(); ?>
 		        		<label>Color</label>
 		        		<select class="form-control color_list" name="item_color">
 		        			<option value="">Select Color</option>
+		        			<option value="">Red</option>
+		        			<option value="">Blue</option>
+		        			<option value="">Yellow</option>
+		        			<option value="">Purple</option>
+		        			<option value="">Black</option>
+		        			<option value="">White</option>
+		        			<option value="">Green</option>
+		        			<option value="">Silver</option>
 		        		</select>
 		        	</div>
         		</div>
             <div class="col-6">
         			<div class="form-group">
 		        		<label>Screen</label>
-		        		<select class="form-control ram_list" name="item_ram">
+		        		<select class="form-control ram_list" name="item_screen">
 		        			<option value="">Select Screen</option>
+                 <script>
+                  var opt;
+                  for(var i = 5.1; i < 7.1; i+=0.1){
+                    document.write(`<option value="${i.toFixed(1)}">${i.toFixed(1)} inches</option>`)
+                  }
+                 </script>
+
 		        		</select>
 		        	</div>
         		</div>
@@ -203,12 +303,12 @@ session_start(); ?>
         		<div class="col-12">
         			<div class="form-group">
 		        		<label>Product Image <small>(format: jpg, jpeg, png)</small></label>
-		        		<input type="file" name="product_image" class="form-control">
+		        		<input type="file" name="item_image" class="form-control">
 		        	</div>
         		</div>
-        		<input type="hidden" name="add_product" value="1">
+        		
         		<div class="col-12">
-        			<button type="submit" class="btn btn-primary add-product"> Add Product </button>
+        			<input type="submit" name="add-product" value="Add Product" class="btn btn-primary add-product"></input>
         		</div>
         	</div>
         	
