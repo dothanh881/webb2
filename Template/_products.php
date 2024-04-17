@@ -21,7 +21,7 @@
             $check_cart_numbers->close();
 
             $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name, cart_image) VALUES(?,?,?,?,?,?)");
-            $insert_cart->bind_param("iiidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
+            $insert_cart->bind_param("siidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
             $insert_cart->execute();
             $message = 'added to wishlist!';
         }

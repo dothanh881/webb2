@@ -1,6 +1,6 @@
 <!-- Special Price -->
 <?php
-    $brand = array_map(function ($pro){ return $pro['item_brand']; }, $product_shuffle);
+    $brand = array_map(function ($pro){ return $pro['category_name']; }, $product_shuffle);
     $unique = array_unique($brand);
     sort($unique);
     shuffle($product_shuffle);
@@ -24,7 +24,7 @@ if(isset($_POST['top_sale_submit'])){
         $cart_image = $_POST['image'];
 
         $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE item_id = ? AND user_id = ?");
-        $check_cart_numbers->bind_param("ii", $item_id, $user_id);
+        $check_cart_numbers->bind_param("is", $item_id, $user_id);
         $check_cart_numbers->execute();
         $check_cart_numbers->store_result();
 
@@ -34,7 +34,7 @@ if(isset($_POST['top_sale_submit'])){
             $check_cart_numbers->close();
 
             $insert_cart = $conn->prepare("INSERT INTO `cart`(user_id, item_id, cart_quantity, cart_price, name, image) VALUES(?,?,?,?,?,?)");
-            $insert_cart->bind_param("iiidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
+            $insert_cart->bind_param("siidss", $user_id, $item_id, $cart_quantity, $cart_price, $name, $cart_image);
             $insert_cart->execute();
             $message = 'added to wishlist!';
         }
@@ -59,7 +59,7 @@ $in_cart = $Cart->getCartId($user_id,$product->getData('cart'));
 
         <div class="grid">
             <?php array_map(function ($item) use($in_cart){ ?>
-            <div class="grid-item border <?php echo $item['item_brand'] ?? "Brand" ; ?>">
+            <div class="grid-item border <?php echo $item['category_name'] ?? "Brand" ; ?>">
                 <div class="item py-2" style="width: 200px;">
                     <div class="product font-rale">
                         <a href="<?php printf('%s?item_id=%s', 'product.php',  $item['item_id']); ?>"><img src="<?php echo $item['item_image'] ?? "./assets/products/13.png"; ?>" alt="product1" class="img-fluid"></a>

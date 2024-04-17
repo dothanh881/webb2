@@ -29,6 +29,23 @@ class Product
         return $resultArray;
     }
 
+    public function getData2($table = 'product', $table1 ='category')
+    {
+        $result = $this->conn->query("SELECT * FROM {$table},{$table1} WHERE $table.category_id = $table1.category_id");
+
+        $resultArray = array();
+
+        if ($result) {
+            // fetch product data one by one
+            while ($item = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+                $resultArray[] = $item;
+            }
+        }
+
+        return $resultArray;
+    }
+
+
     public function getData1($table = 'cart', $user_id)
 {
     // Prepare the SQL statement with a placeholder for user_id

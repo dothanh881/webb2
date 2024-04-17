@@ -12,7 +12,7 @@ require('database/Cart.php');
 $product = new Product($conn);
 
 // get product data
-$product_shuffle = $product->getData();
+$product_shuffle = $product->getData2();
 
 $Cart = new Cart($conn);
 ?>

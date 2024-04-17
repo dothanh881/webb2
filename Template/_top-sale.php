@@ -14,7 +14,7 @@
             $cart_image = $_POST['image'];
     
             $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE item_id = ? AND user_id = ?");
-            $check_cart_numbers->bind_param("ii", $item_id, $user_id);
+            $check_cart_numbers->bind_param("is", $item_id, $user_id);
             $check_cart_numbers->execute();
             $check_cart_numbers->store_result();
     

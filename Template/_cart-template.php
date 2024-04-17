@@ -29,7 +29,7 @@ if(isset($_SESSION['user_id'])){
         
         if($stmt){
             // Bind the values to the SQL statement parameters
-            $stmt->bind_param("iii", $qty, $update_id, $user_id);
+            $stmt->bind_param("iis", $qty, $update_id, $user_id);
             
             // Execute the SQL statement
             if($stmt->execute()){

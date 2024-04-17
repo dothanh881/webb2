@@ -11,6 +11,61 @@ session_start(); ?>
     include("./../functions.php");
     ?>
 
+<style>
+    .pagination-justify-content-center {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 15px;
+    }
+
+    .pagination-justify-content-center .page-item {
+        display: inline-block;
+        margin-right: 5px;
+        background-color: #ddd; /* Màu nền xám */
+        padding: 15px 30px; /* Kích thước padding */
+        border-radius: 2px;
+    }
+
+    .pagination-justify-content-center .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #ddd; /* Màu nền xám */
+    }
+
+    .pagination-justify-content-center .page-item.active .page-link {
+        /* color: #613d8a; màu nút khi được bấm */
+        color: red;
+    }
+
+    .pagination-justify-content-center .page-link {
+        color: black; 
+    }
+
+    .pagination-justify-content-center .page-link:hover {
+        color: purple; /* Màu chữ khi hover */
+        text-decoration: none;
+
+    }
+
+</style>
+<?php
+
+  $products_per_page = 6;
+  
+  $total_products = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `product`"));
+
+  $total_pages = ceil($total_products / $products_per_page);
+
+
+  $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+  $offset = ($current_page - 1) * $products_per_page;
+
+
+?>
+
       <div class="row">
       	<div class="col-10">
       		<h2>Product List</h2>
@@ -28,14 +83,14 @@ session_start(); ?>
               <th>Image</th>
               <th>Name</th>
               <th>Price</th>
-              <th>Category</th> 
+              <th>Quantity</th> 
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="product_list">
             <?php 
 
-            $sql = "SELECT * FROM `product`,`category` WHERE `product`.category_id = `category`.category_id";
+            $sql = "SELECT * FROM `product`,`category` WHERE `product`.category_id = `category`.category_id LIMIT $products_per_page offset $offset";
             $stmt = $conn->prepare($sql);
 
             $stmt-> execute();
@@ -49,11 +104,11 @@ session_start(); ?>
               <td><img height='100px' src='./../<?= $product->item_image ?>'></td>
               <td> <?php echo $product->item_name ?></td>
               <td> <?php echo $product->item_price ?></td>
-              <td> <?php echo $product->category_name ?></td>
+              <td> <?php echo $product->item_quantity ?></td>
            
               <td>
-              <a class="btn btn-sm btn-info">Edit</a>
-                  <a class="btn btn-sm btn-warning">Delete</a>
+              <a href="products.php?update=<?php echo $product->item_id ?>" data-toggle="modal" data-target="#edit_product_modal" class="btn btn-sm btn-info">Edit</a>
+                  <a href="products.php?delete= <?php echo $product->item_id ?>" class="btn btn-sm btn-warning">Delete</a>
               </td>
             </tr>
           </tbody>
@@ -82,21 +137,14 @@ session_start(); ?>
         		<div class="col-12">
         			<div class="form-group">
 		        		<label>Product Name</label>
-		        		<input type="text" name="product_name" class="form-control" placeholder="Enter Product Name">
+		        		<input type="text" name="item_name" class="form-control" placeholder="Enter Product Name">
 		        	</div>
         		</div>
-        		<div class="col-12">
-        			<div class="form-group">
-		        		<label>Brand Name</label>
-		        		<select class="form-control brand_list" name="brand_id">
-		        			<option value="">Select Brand</option>
-		        		</select>
-		        	</div>
-        		</div>
+        	
         		<div class="col-12">
         			<div class="form-group">
 		        		<label>Category Name</label>
-		        		<select class="form-control category_list" name="category_id">
+		        		<select class="form-control category_list" name="category">
 		        			<option value="">Select Category</option>
 		        		</select>
 		        	</div>
@@ -104,27 +152,54 @@ session_start(); ?>
         		<div class="col-12">
         			<div class="form-group">
 		        		<label>Product Description</label>
-		        		<textarea class="form-control" name="product_desc" placeholder="Enter product desc"></textarea>
+		        		<textarea class="form-control" name="item_desc" placeholder="Enter product desc"></textarea>
 		        	</div>
         		</div>
-            <div class="col-12">
+            <div class="col-6">
               <div class="form-group">
                 <label>Product Qty</label>
-                <input type="number" name="product_qty" class="form-control" placeholder="Enter Product Quantity">
+                <input type="number" min="0" name="item_qty" class="form-control" placeholder="Enter Product Quantity">
               </div>
             </div>
-        		<div class="col-12">
+        		<div class="col-6">
         			<div class="form-group">
 		        		<label>Product Price</label>
-		        		<input type="number" name="product_price" class="form-control" placeholder="Enter Product Price">
+		        		<input type="number" min="0"  name="item_price" class="form-control" placeholder="Enter Product Price">
 		        	</div>
         		</div>
-        		<div class="col-12">
+        		<div class="col-6">
         			<div class="form-group">
-		        		<label>Product Keywords <small>(eg: apple, iphone, mobile)</small></label>
-		        		<input type="text" name="product_keywords" class="form-control" placeholder="Enter Product Keywords">
+		        		<label>ROM</label>
+		        		<select class="form-control rom_list" name="item_rom">
+		        			<option value="">Select ROM</option>
+		        		</select>
 		        	</div>
         		</div>
+            <div class="col-6">
+        			<div class="form-group">
+		        		<label>RAM</label>
+		        		<select class="form-control ram_list" name="item_ram">
+		        			<option value="">Select RAM</option>
+		        		</select>
+		        	</div>
+        		</div>
+            <div class="col-6">
+        			<div class="form-group">
+		        		<label>Color</label>
+		        		<select class="form-control color_list" name="item_color">
+		        			<option value="">Select Color</option>
+		        		</select>
+		        	</div>
+        		</div>
+            <div class="col-6">
+        			<div class="form-group">
+		        		<label>Screen</label>
+		        		<select class="form-control ram_list" name="item_ram">
+		        			<option value="">Select Screen</option>
+		        		</select>
+		        	</div>
+        		</div>
+           
         		<div class="col-12">
         			<div class="form-group">
 		        		<label>Product Image <small>(format: jpg, jpeg, png)</small></label>
@@ -133,7 +208,7 @@ session_start(); ?>
         		</div>
         		<input type="hidden" name="add_product" value="1">
         		<div class="col-12">
-        			<button type="button" class="btn btn-primary add-product">Add Product</button>
+        			<button type="submit" class="btn btn-primary add-product"> Add Product </button>
         		</div>
         	</div>
         	
@@ -149,7 +224,7 @@ session_start(); ?>
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -222,6 +297,35 @@ session_start(); ?>
     </div>
   </div>
 </div>
+
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination-justify-content-center">
+    <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
+                <a class="page-link" href="<?php echo  '?page=1'  ?>"> First </a>
+        </li>
+        <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
+            <a class="page-link" href="<?php echo $current_page == 1 ? '#' : '?page=' . ($current_page - 1); ?>" tabindex="-1"> < </a>
+        </li>
+        <?php
+        // Hiển thị các trang
+        for ($i = 1; $i <= $total_pages; $i++) {
+            ?>
+            <li class="page-item <?php echo $current_page == $i ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+            <?php
+        }
+        ?>
+        <li class="page-item <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
+            <a class="page-link" href="<?php echo $current_page == $total_pages ? '#' : '?page=' . ($current_page + 1); ?>"> > </a>
+        </li>
+        <li class="page-item <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
+            <a class="page-link" href="<?php echo $current_page == $total_pages ? '#' : '?page=' . ($total_pages); ?>"> Last </a>
+        </li>
+    </ul>
+</nav>
+
 <!-- Edit Product Modal end -->
 
 <?php include_once("./templates/footer.php"); ?>
