@@ -70,7 +70,7 @@ session_start(); ?>
 <?php
 
 //paging nav
-  $products_per_page = 6;
+  $products_per_page = 4;
   
   $total_products = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `product`"));
 
@@ -125,7 +125,7 @@ session_start(); ?>
               <td> <?php echo $product->item_quantity ?></td>
            
               <td>
-              <a href="products.php?update=<?php echo $product->item_id ?>" data-toggle="modal" data-target="#edit_product_modal" class="btn btn-sm btn-info">Edit</a>
+              <a href="editproduct.php?update=<?= $product->item_id ?>" class="btn btn-sm btn-info">Edit</a>
                   <a href="products.php?delete= <?php echo $product->item_id ?>" class="btn btn-sm btn-warning">Delete</a>
               </td>
             </tr>
@@ -319,109 +319,27 @@ if(isset($_POST['add-product'])){
 </div>
 <!-- Add Product Modal end -->
 
-<!-- Edit Product Modal start -->
-<div class="modal fade" id="edit_product_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="edit-product-form" enctype="multipart/form-data">
-          <div class="row">
-            <div class="col-12">
-              <div class="form-group">
-                <label>Product Name</label>
-                <input type="text" name="e_product_name" class="form-control" placeholder="Enter Product Name">
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Brand Name</label>
-                <select class="form-control brand_list" name="e_brand_id">
-                  <option value="">Select Brand</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Category Name</label>
-                <select class="form-control category_list" name="e_category_id">
-                  <option value="">Select Category</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Product Description</label>
-                <textarea class="form-control" name="e_product_desc" placeholder="Enter product desc"></textarea>
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Product Qty</label>
-                <input type="number" name="e_product_qty" class="form-control" placeholder="Enter Product Quantity">
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Product Price</label>
-                <input type="number" name="e_product_price" class="form-control" placeholder="Enter Product Price">
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Product Keywords <small>(eg: apple, iphone, mobile)</small></label>
-                <input type="text" name="e_product_keywords" class="form-control" placeholder="Enter Product Keywords">
-              </div>
-            </div>
-            <div class="col-12">
-              <div class="form-group">
-                <label>Product Image <small>(format: jpg, jpeg, png)</small></label>
-                <input type="file" name="e_product_image" class="form-control">
-                <img src="../product_images/1.0x0.jpg" class="img-fluid" width="50">
-              </div>
-            </div>
-            <input type="hidden" name="pid">
-            <input type="hidden" name="edit_product" value="1">
-            <div class="col-12">
-              <button type="button" class="btn btn-primary submit-edit-product">Add Product</button>
-            </div>
-          </div>
-          
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 
 
-<nav aria-label="Page navigation example">
-    <ul class="pagination-justify-content-center">
-    <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
-                <a class="page-link" href="<?php echo  '?page=1'  ?>"> First </a>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=1" tabindex="-1">First</a>
         </li>
         <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
-            <a class="page-link" href="<?php echo $current_page == 1 ? '#' : '?page=' . ($current_page - 1); ?>" tabindex="-1"> < </a>
+            <a class="page-link" href="<?php echo $current_page == 1 ? '#' : '?page=' . ($current_page - 1); ?>">Previous</a>
         </li>
-        <?php
-        // Hiển thị các trang
-        for ($i = 1; $i <= $total_pages; $i++) {
-            ?>
+        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
             <li class="page-item <?php echo $current_page == $i ? 'active' : ''; ?>">
                 <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
             </li>
-            <?php
-        }
-        ?>
+        <?php } ?>
         <li class="page-item <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
-            <a class="page-link" href="<?php echo $current_page == $total_pages ? '#' : '?page=' . ($current_page + 1); ?>"> > </a>
+            <a class="page-link" href="<?php echo $current_page == $total_pages ? '#' : '?page=' . ($current_page + 1); ?>">Next</a>
         </li>
         <li class="page-item <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
-            <a class="page-link" href="<?php echo $current_page == $total_pages ? '#' : '?page=' . ($total_pages); ?>"> Last </a>
+            <a class="page-link" href="?page=<?php echo $total_pages; ?>">Last</a>
         </li>
     </ul>
 </nav>

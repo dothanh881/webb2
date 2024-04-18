@@ -40,12 +40,7 @@ if ( isset($_SESSION["user_id"]) ) {
               Products
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link <?php echo ($page == 'brands.php') ? 'active' : ''; ?>" href="brands.php">
-              <span data-feather="box"></span>
-              Brands
-            </a>
-          </li>
+        
           <li class="nav-item">
             <a class="nav-link <?php echo ($page == 'categories.php') ? 'active' : ''; ?>" href="categories.php">
               <span data-feather="layers"></span>

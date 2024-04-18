@@ -73,7 +73,47 @@ input[type="number"] {
 label {
     font-weight: bold;
 }
+.pagination-justify-content-center {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 15px;
+    }
+
+    .pagination-justify-content-center .page-item {
+        display: inline-block;
+        margin-right: 5px;
+        background-color: #ddd; /* Màu nền xám */
+        padding: 15px 30px; /* Kích thước padding */
+        border-radius: 2px;
+    }
+
+    .pagination-justify-content-center .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #ddd; /* Màu nền xám */
+    }
+
+    .pagination-justify-content-center .page-item.active .page-link {
+        /* color: #613d8a; màu nút khi được bấm */
+        color: red;
+    }
+
+    .pagination-justify-content-center .page-link {
+        color: black; 
+    }
+
+    .pagination-justify-content-center .page-link:hover {
+        color: purple; /* Màu chữ khi hover */
+        text-decoration: none;
+
+    }
+
 </style>
+
+
+
 <?php
 // SEARCH FEATURES
 
@@ -95,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Check for POST request
         $key_rom = $_GET['sRom'] ?? 'All Rom';
         $key_screen = $_GET['sScreen'] ?? 'All Screen';
     }
-        $sql = "SELECT * FROM `product`,`category` WHERE 1 AND `product`.category_id = `category`.category_id"; // Start with a base condition
+        $sql = "SELECT * FROM `product`,`category` WHERE 1 AND `product`.category_id = `category`.category_id  "; // Start with a base condition
         $conditions = [];
         if ($key !== '') {
             $conditions[] = "item_name LIKE '%$key%'"; // Search by keyword
@@ -116,8 +156,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Check for POST request
             $conditions[] = "size_screen = $key_screen"; // Filter by ROM
         }
         if (!empty($conditions)) {
-            $sql .= " AND (" . implode(' AND ', $conditions) . ")"; // Combine conditions
+            $sql .= " AND " . implode(' AND ', $conditions) ; // Combine conditions
         }
+        
+       
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $list_result = $stmt->get_result();
@@ -313,6 +355,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Check for POST request
             ?>
         </div>
     </div>
+
+    
+
+
 </div>
         </section>
 <?php
