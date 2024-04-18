@@ -32,14 +32,13 @@ session_name('customer_session');
 
     <!-- Custom CSS file -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="styles.css">
+   
     
 
     <?php
     // require functions.php file
     require ('functions.php');
     ?>
-
 
 
 
@@ -72,9 +71,13 @@ session_name('customer_session');
     <li class="nav-item">
         <a class="nav-link" href="#">Order</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="searchpage.php"><i class="fas fa-search"></i> Search</a>
-    </li>
+    <div class="form-container">
+    <form method="post" action="searchpage.php" class="d-flex">
+        <input type="text" name="search_box" placeholder="search here..." class="form-control " id="search">
+        <button class="btn btn-success" id="search_btn" name="search_btn">Search</button>
+    </form>
+</div>
+    
 </ul>
 
             <?php if(isset($_SESSION['username'])){

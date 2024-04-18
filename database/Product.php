@@ -31,7 +31,7 @@ class Product
 
     public function getData2($table = 'product', $table1 ='category')
     {
-        $result = $this->conn->query("SELECT * FROM {$table},{$table1} WHERE $table.category_id = $table1.category_id");
+        $result = $this->conn->query("SELECT * FROM {$table},{$table1} WHERE $table.category_id = $table1.category_id AND item_status = 1" );
 
         $resultArray = array();
 
