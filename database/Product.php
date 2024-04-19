@@ -46,10 +46,10 @@ class Product
     }
 
 
-    public function getData1($table = 'cart', $user_id)
+    public function getData1($table = 'cart'  ,$user_id)
 {
     // Prepare the SQL statement with a placeholder for user_id
-    $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE user_id = ?");
+    $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE user_id = ? ");
     
     // Bind the user_id parameter to the prepared statement
     $stmt->bind_param("s", $user_id);
@@ -77,7 +77,7 @@ public function getProduct1($user_id, $item_id = null, $table = 'cart')
     // Check if $item_id is set
     if (isset($item_id)) {
         // Prepare the SQL statement with placeholders for user_id and item_id
-        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE user_id = ? AND item_id = ?");
+        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE user_id = ? AND item_id = ? ");
         
         // Bind the user_id and item_id parameters to the prepared statement
         $stmt->bind_param("ss", $user_id, $item_id);

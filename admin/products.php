@@ -9,6 +9,7 @@ session_start(); ?>
     
     <?php include "./templates/sidebar.php";
     include("./../functions.php");
+    include("checkstatus.php");
     ?>
 
 <style>
@@ -55,7 +56,35 @@ session_start(); ?>
 
 
 
+<?php
 
+   
+
+
+    if(isset($_GET['delete'])) {
+      $delete_id = $_GET['delete'];
+      
+      // Kiểm tra trạng thái của sản phẩm
+      $status = checkStatus($delete_id);
+      
+      // Nếu trạng thái là 0 hoặc 1, xóa sản phẩm
+      if ($status == 0 || $status == 1) {
+          $sql = "DELETE FROM `product` WHERE item_id = ?";
+          $stmt = $conn->prepare($sql);
+          $stmt->bind_param("i", $delete_id);
+          $stmt->execute();
+      } elseif ($status == 2) {
+          // Nếu trạng thái là 2, cập nhật lại trạng thái thành 0 thay vì xóa
+          $sql1 = "UPDATE `product` SET item_status = 0 WHERE item_id = ?";
+          $stmt1 = $conn->prepare($sql1);
+          $stmt1->bind_param("i", $delete_id);
+          $stmt1->execute();
+      }
+  }
+
+
+
+?>
 
 
 
@@ -126,7 +155,7 @@ session_start(); ?>
            
               <td>
               <a href="editproduct.php?update=<?= $product->item_id ?>" class="btn btn-sm btn-info">Edit</a>
-                  <a href="products.php?delete= <?php echo $product->item_id ?>" class="btn btn-sm btn-warning">Delete</a>
+                  <a href="products.php?delete=<?php echo $product->item_id ?>" onclick="return confirm('Delete this product?');" class="btn btn-sm btn-warning">Delete</a>
               </td>
             </tr>
           </tbody>
@@ -171,17 +200,15 @@ if(isset($_POST['add-product'])){
       $stmt = $conn->prepare($sql);
 
       if($stmt){
-          $stmt->bind_param("isiisssiii", $item_category, $item_name, $item_qty, $item_price, $item_color, $item_image, $item_desc, $item_rom, $item_ram, $item_screen);
+          $stmt->bind_param("isidsssiii", $item_category, $item_name, $item_qty, $item_price, $item_color, $item_image, $item_desc, $item_rom, $item_ram, $item_screen);
           if($stmt->execute()) {
-              echo "Sản phẩm đã được thêm thành công vào cơ sở dữ liệu";
+              echo "Success!!";
           } else {
-              echo "Lỗi trong quá trình thêm sản phẩm vào cơ sở dữ liệu: " . $stmt->error;
+              echo "Error " . $stmt->error;
           }
-      } else {
-          echo "Lỗi trong quá trình chuẩn bị câu lệnh SQL";
-      }
+      } 
   } else {
-      echo "Lỗi khi di chuyển tệp tải lên";
+      echo "Image up failed!!";
   }
 }
   
@@ -273,14 +300,14 @@ if(isset($_POST['add-product'])){
 		        		<label>Color</label>
 		        		<select class="form-control color_list" name="item_color">
 		        			<option value="">Select Color</option>
-		        			<option value="">Red</option>
-		        			<option value="">Blue</option>
-		        			<option value="">Yellow</option>
-		        			<option value="">Purple</option>
-		        			<option value="">Black</option>
-		        			<option value="">White</option>
-		        			<option value="">Green</option>
-		        			<option value="">Silver</option>
+		        			<option value="Red">Red</option>
+		        			<option value="Blue">Blue</option>
+		        			<option value="Yellow">Yellow</option>
+		        			<option value="Purple">Purple</option>
+		        			<option value="Black">Black</option>
+		        			<option value="White">White</option>
+		        			<option value="Green">Green</option>
+		        			<option value="Silver">Silver</option>
 		        		</select>
 		        	</div>
         		</div>
@@ -302,9 +329,11 @@ if(isset($_POST['add-product'])){
            
         		<div class="col-12">
         			<div class="form-group">
+
 		        		<label>Product Image <small>(format: jpg, jpeg, png)</small></label>
-		        		<input type="file" name="item_image" class="form-control">
+		        		<input type="file" name="item_image" id="item_image_input" class="form-control">
 		        	</div>
+              <img id="preview_image" width='200px' height='150px' src='' alt="Preview Image">
         		</div>
         		
         		<div class="col-12">
@@ -348,6 +377,23 @@ if(isset($_POST['add-product'])){
 
 <?php include_once("./templates/footer.php"); ?>
 
+<script>
+  // Display image before adding product
+    document.addEventListener('DOMContentLoaded', function () {
+        var input = document.getElementById('item_image_input');
+        var previewImage = document.getElementById('preview_image');
 
+        input.addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                previewImage.src = event.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
 
 <script type="text/javascript" src="./js/products.js"></script>
