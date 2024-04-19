@@ -48,7 +48,7 @@ include("./../functions.php");
                 ?>
               </td>
               <td>
-                <a class="btn btn-sm btn-info">Edit</a>
+                <a href="edit_customer.php?customer=<?php echo $cust->user_id ?>" class="btn btn-sm btn-info">Edit</a>
                 <a class="btn btn-sm btn-warning">Delete</a>
               </td>
             </tr>
