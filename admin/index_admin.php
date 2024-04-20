@@ -11,6 +11,38 @@ include("./../functions.php");
  
 <?php include "./templates/navbar.php"; ?>
 
+
+
+
+
+
+
+
+<?php
+
+//paging nav
+  $products_per_page = 4;
+  
+  $total_products = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `user` where is_admin = 1"));
+
+  $total_pages = ceil($total_products / $products_per_page);
+
+
+  $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+  $offset = ($current_page - 1) * $products_per_page;
+
+
+?>
+
+
+
+
+
+
+
+
+
 <div class="container-fluid">
   <div class="row">
     
@@ -32,7 +64,7 @@ include("./../functions.php");
           </thead>
           <tbody id="admin_list">
           <?php
-          $sql = "SELECT * FROM `user` WHERE is_admin = 1";
+          $sql = "SELECT * FROM `user` WHERE is_admin = 1 LIMIT $products_per_page offset $offset";
           $stmt = $conn->prepare($sql);
           $stmt->execute();
           $res = $stmt->get_result();
@@ -72,7 +104,7 @@ include("./../functions.php");
                 } else {
                   // Disabling options for the current admin
                   ?>
-                  <a class="btn btn-sm btn-info"  >Edit</a>
+                  <a href="edit_admin.php?admin=<?= $admin->user_id?>" class="btn btn-sm btn-info"  >Edit</a>
                   <button class="btn btn-sm btn-warning" disabled>Delete</button>
                   <?php
                 }
@@ -87,6 +119,28 @@ include("./../functions.php");
     </main>
   </div>
 </div>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=1" tabindex="-1">First</a>
+        </li>
+        <li class="page-item <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
+            <a class="page-link" href="<?php echo $current_page == 1 ? '#' : '?page=' . ($current_page - 1); ?>">Previous</a>
+        </li>
+        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+            <li class="page-item <?php echo $current_page == $i ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php } ?>
+        <li class="page-item <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
+            <a class="page-link" href="<?php echo $current_page == $total_pages ? '#' : '?page=' . ($current_page + 1); ?>">Next</a>
+        </li>
+        <li class="page-item <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $total_pages; ?>">Last</a>
+        </li>
+    </ul>
+</nav>
 
 <?php include "./templates/footer.php"; ?>
 

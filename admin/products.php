@@ -69,10 +69,20 @@ session_start(); ?>
       
       // Nếu trạng thái là 0 hoặc 1, xóa sản phẩm
       if ($status == 0 || $status == 1) {
+
+        $delCart = "DELETE FROM `cart` WHERE item_id = ?";
+        $stmt = $conn->prepare($delCart);
+        $stmt ->bind_param("i", $delete_id);
+        $stmt ->execute();
+
+
+
           $sql = "DELETE FROM `product` WHERE item_id = ?";
           $stmt = $conn->prepare($sql);
           $stmt->bind_param("i", $delete_id);
           $stmt->execute();
+
+
       } elseif ($status == 2) {
           // Nếu trạng thái là 2, cập nhật lại trạng thái thành 0 thay vì xóa
           $sql1 = "UPDATE `product` SET item_status = 0 WHERE item_id = ?";
@@ -188,7 +198,7 @@ if(isset($_POST['add-product'])){
       $item_category =  input_filter($_POST['category']);
       $item_desc =  input_filter($_POST['item_desc']);
       $item_qty =  input_filter($_POST['item_qty']);
-      $item_price =  input_filter($_POST['item_price']);
+      $item_price = $_POST['item_price'];
       $item_rom =  input_filter($_POST['item_rom']);
       $item_ram =  input_filter($_POST['item_ram']);
       $item_color =  input_filter($_POST['item_color']);
@@ -264,7 +274,7 @@ if(isset($_POST['add-product'])){
         		<div class="col-6">
         			<div class="form-group">
 		        		<label>Product Price</label>
-		        		<input type="number" min="0"  name="item_price" class="form-control" placeholder="Enter Product Price">
+		        		<input type="number" min="0" step="0.01"  name="item_price" class="form-control" placeholder="Enter Product Price">
 		        	</div>
         		</div>
         		<div class="col-6">

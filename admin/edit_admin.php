@@ -14,7 +14,7 @@ session_start(); ?>
     ?>
    <div class="container p-5">
 
-<h4>Edit Customer Detail</h4>
+<h4>Edit Admin Detail</h4>
 
 
 
@@ -60,10 +60,10 @@ session_start(); ?>
 
 <?php
 // Get db for each product to edit
-   if(isset($_GET['customer'])){
+   if(isset($_GET['admin'])){
 
-    $customer_id = $_GET['customer'];
-    $sql = "SELECT * FROM `user` WHERE `user_id` = ? AND is_admin = 0 ";
+    $customer_id = $_GET['admin'];
+    $sql = "SELECT * FROM `user` WHERE `user_id` = ? AND is_admin = 1 ";
 
     $select = $conn->prepare($sql);
     
