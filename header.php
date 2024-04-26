@@ -32,10 +32,15 @@ session_name('customer_session');
 
     <!-- Custom CSS file -->
     <link rel="stylesheet" href="style.css">
-   
-    
+<!-- Latest compiled and minified CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <?php
+<!-- Latest compiled JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3SF+sOSvM6ZXsHnSnjXzBsCtXTwhmJyPJUhCV7QjSpcFNvDyCIlEyHhPOnQjWrH/NlxYLbm3DwzIAEV0yQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-hzTunOHPWCEaOCPAJ9wSxQL8vmEyjabiPwQXdbwnBxQFr2VWvthN/xcbyyCwLwLwT0aSOOCBTk/sffaClByTqSQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<?php
     // require functions.php file
     require ('functions.php');
     ?>
@@ -65,9 +70,14 @@ session_name('customer_session');
     <li class="nav-item active">
         <a class="nav-link" href="#">On Sale</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Products <i class="fas fa-chevron-down"></i></a>
-    </li>
+    <li class="nav-item dropdown">
+    <a type="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="searchpage.php?">Products</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="searchpage.php?sCate=APPLE">iPhone</a>
+      <a class="dropdown-item" href="searchpage.php?sCate=SAMSUNG">Samsung</a>
+    </div>
+</li>
+
     <li class="nav-item">
         <a class="nav-link" href="#">Order</a>
     </li>

@@ -42,7 +42,7 @@ shuffle($product_shuffle);
     width: 100%;
 }
 
-button[type="reset"] {
+.btn-reset {
     background-color: #007bff;
     color: white;
     border: none;
@@ -58,7 +58,7 @@ button[type="reset"] {
 }
 
 
-button[type="reset"]:hover {
+.btn-reset:hover {
     background-color: #0056b3;
 }
 
@@ -125,7 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Check for POST request
         $key_rom = $_POST['sRom'] ?? 'All Rom';
         $key_screen = $_POST['sScreen'] ?? 'All Screen';
     }
-    $pageNow=1;
     if ($_SERVER['REQUEST_METHOD'] === 'GET')
     {
         $key = isset($_GET['search_box']) ? addslashes($_GET['search_box']) : '';
@@ -290,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Check for POST request
             </div>
             <div class="form-group">
                 <button type="submit" class="btn-sub">Search</button>
-                <button type="reset" class="btn-reset"> Reset</button>
+                <button type="button" class="btn-reset" onclick="window.location.reload()" formmethod="post">Reset</button>
             </div>
         </form>
     </div>
