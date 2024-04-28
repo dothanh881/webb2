@@ -73,8 +73,8 @@ session_name('customer_session');
     <li class="nav-item dropdown">
     <a type="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="searchpage.php?">Products</a>
     <div class="dropdown-menu">
-      <a class="dropdown-item" href="searchpage.php?sCate=APPLE">iPhone</a>
-      <a class="dropdown-item" href="searchpage.php?sCate=SAMSUNG">Samsung</a>
+      <a class="dropdown-item" href="category.php?sCate=APPLE">Apple</a>
+      <a class="dropdown-item" href="category.php?sCate=SAMSUNG">Samsung</a>
     </div>
 </li>
 
@@ -99,7 +99,7 @@ session_name('customer_session');
             </a>
             
             <div class="dropdown-menu drop" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Profile</a>
+                <a class="dropdown-item" href="profile.php">Profile</a>
                 <a class="dropdown-item" href="#">Order</a>
                 <a class="dropdown-item" href="logout.php" onclick="return confirm('logout from the website?');">Logout</a>
             </div>
